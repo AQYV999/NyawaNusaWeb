@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e879f9"/>
+      <stop offset="100%" style="stop-color:#d946ef"/>
+    </linearGradient>
+  </defs>
+  <circle cx="128" cy="128" r="120" fill="url(#grad)" opacity="0.15"/>
+  <circle cx="128" cy="128" r="115" fill="none" stroke="url(#grad)" stroke-width="4"/>
+  <polygon points="128,40 142,90 195,95 152,130 165,185 128,155 91,185 104,130 61,95 114,90" fill="url(#grad)" opacity="0.95"/>
+  <circle cx="128" cy="128" r="28" fill="#4a044e"/>
+  <text x="128" y="210" text-anchor="middle" fill="#e879f9" font-family="Rajdhani, sans-serif" font-weight="700" font-size="24">LEGEND</text>
+</svg>
