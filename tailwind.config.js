@@ -33,8 +33,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['var(--font-sans)'],
-        display: ['var(--font-display)'],
+        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
       },
       animation: {
         'shimmer': 'shimmer 3s linear infinite',
