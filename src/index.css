@@ -29,7 +29,7 @@
   }
 
   body {
-    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
     background-color: var(--bg);
     color: var(--fg);
     -webkit-font-smoothing: antialiased;
@@ -37,7 +37,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Rajdhani', 'Outfit', sans-serif;
+    font-family: var(--font-display);
   }
 
   ::selection {

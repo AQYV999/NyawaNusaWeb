@@ -33,8 +33,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Outfit', 'system-ui', 'sans-serif'],
-        display: ['Rajdhani', 'Outfit', 'sans-serif'],
+        sans: ['var(--font-sans)'],
+        display: ['var(--font-display)'],
       },
       animation: {
         'shimmer': 'shimmer 3s linear infinite',
