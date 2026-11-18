@@ -1,331 +1,651 @@
-'use client';
+import type { CSSProperties } from 'react';
+import { SITE } from '../config/site';
+import { CopyIpButton } from '../components/CopyIpButton';
 
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Heart, ArrowRight, Shield, HeartCrack, Skull, Target, Zap, Users, Award, ExternalLink } from 'lucide-react';
-import { SectionHeading } from '@/components/SectionHeading';
-import { FeatureCard } from '@/components/FeatureCard';
-import { GameplaySystemCard } from '@/components/GameplaySystemCard';
-import { RankCard } from '@/components/RankCard';
-import { NewsCard } from '@/components/NewsCard';
-import { ServerStatus } from '@/components/ServerStatus';
-import { LIFESTEAL_FEATURES, GAMEPLAY_SYSTEMS } from '@/data/features';
-import { RANKS } from '@/data/ranks';
-import { NEWS } from '@/data/news';
-import { SITE } from '@/config/site';
+const DISCORD_URL = 'https://discord.gg/nyawanusa';
+const SUPPORT_EMAIL = 'support@nyawanusa.id';
+
+const PLUGIN_DIAGRAM = JSON.stringify({
+  layout: 'hub',
+  ground: 'glow rings',
+  center: { icon: 'ui:server', label: 'Paper 1.21.4' },
+  spokes: [
+    { icon: 'ui:heart-pulse', label: 'LifeStealZ' },
+    { icon: 'ui:shield-alert', label: 'CombatLogX' },
+    { icon: 'ui:target', label: 'BetterBounty' },
+    { icon: 'ui:store', label: 'zAuctionHouse' },
+    { icon: 'ui:wallet', label: 'EssentialsX' },
+    { icon: 'ui:layers', label: 'ViaVersion' },
+  ],
+});
+
+interface RankTier {
+  id: string;
+  label: string;
+  price: string;
+  summary: string;
+  note: string;
+  icon: 'shield' | 'crosshair' | 'skull' | 'crown';
+}
+
+const RANKS: RankTier[] = [
+  {
+    id: 'survivor',
+    label: 'SURVIVOR',
+    price: 'Rp 15.000',
+    summary: 'Identitas obrolan pendukung di lobi tanpa tambahan hati atau item tempur.',
+    note: 'Start tetap 10 hati',
+    icon: 'shield',
+  },
+  {
+    id: 'hunter',
+    label: 'HUNTER',
+    price: 'Rp 35.000',
+    summary: 'Penanda petualang aktif saat berburu buronan di luar batas spawn.',
+    note: 'Start tetap 10 hati',
+    icon: 'crosshair',
+  },
+  {
+    id: 'reaper',
+    label: 'REAPER',
+    price: 'Rp 65.000',
+    summary: 'Dukungan tambahan slot penanda markas tim dan daftar lelang pasar.',
+    note: 'Start tetap 10 hati',
+    icon: 'skull',
+  },
+  {
+    id: 'legend',
+    label: 'LEGEND',
+    price: 'Rp 125.000',
+    summary: 'Dukungan penuh pemeliharaan server tanpa mengubah batas maksimal 40 hati.',
+    note: 'Start tetap 10 hati',
+    icon: 'crown',
+  },
+];
+
+function RankIcon({ name }: { name: RankTier['icon'] }) {
+  if (name === 'shield') {
+    return (
+      <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+      </svg>
+    );
+  }
+  if (name === 'crosshair') {
+    return (
+      <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M22 12h-4M6 12H2m10-6V2m0 20v-4" />
+      </svg>
+    );
+  }
+  if (name === 'skull') {
+    return (
+      <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="m12.5 17-.5-1-.5 1z" />
+        <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z" />
+        <circle cx="15" cy="12" r="1" />
+        <circle cx="9" cy="12" r="1" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294zM5 21h14" />
+    </svg>
+  );
+}
+
+const FAQS = [
+  {
+    q: 'Apakah rank NyawaNusa memberi tambahan jantung di awal?',
+    a: 'Tidak. Seluruh pemain memulai dari 10 hati dan tunduk pada batas maksimal 40 hati yang sama.',
+  },
+  {
+    q: 'Mengapa akun gugur ketika keluar di tengah duel LifeSteal?',
+    a: 'CombatLogX menerapkan kunci tempur 10 detik. Keluar sebelum timer selesai otomatis dianggap kalah.',
+  },
+  {
+    q: 'Versi Minecraft apa saja yang didukung server NyawaNusa?',
+    a: 'Server berjalan di Paper 1.21.4 Java 21, mendukung client Java 1.8 hingga 1.21.4 dan Bedrock port 19132.',
+  },
+  {
+    q: 'Bagaimana memulihkan akun LifeSteal setelah menyentuh nol hati?',
+    a: 'Akun yang tereliminasi menunggu pergantian musim baru atau menggunakan item kebangkitan di dalam permainan.',
+  },
+];
 
 export function Home() {
-  const featuredNews = NEWS[0];
-  const recentNews = NEWS.slice(1, 3);
-
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden" aria-labelledby="hero-title">
-        {/* Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(220,38,38,0.15),transparent_70%)]" aria-hidden="true" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,_rgba(220,38,38,0.05)_0%,_transparent_50%)]" aria-hidden="true" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(220,38,38,0.03)_1px,_transparent_1px),_linear-gradient(90deg,_rgba(220,38,38,0.03)_1px,_transparent_1px)] bg-[size:60px_60px]" aria-hidden="true" />
+      <header className="nav">
+        <div className="wrap nav__bar">
+          <a className="skip-link" href="#top">
+            Lewati ke konten utama
+          </a>
 
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          {[...Array(15)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full bg-primary/30 blur-[8px]"
-              style={{
-                width: 4 + (i * 0.8),
-                height: 4 + (i * 0.8),
-                left: `${10 + (i * 6)}%`,
-                top: `${20 + (i * 4)}%`,
-              }}
-              initial={false}
-              animate={{
-                y: [0, -20 - (i * 2), 0],
-                opacity: [0.1, 0.4, 0.1],
-              }}
-              transition={{
-                duration: 6 + (i * 0.5),
-                delay: i * 0.3,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            />
-          ))}
-        </div>
+          <a className="nav__logo" href="#top">
+            <span className="mark" data-mark="dots" aria-hidden="true" />
+            <span>NyawaNusa</span>
+          </a>
 
-        <div className="container-main relative z-10 py-20">
-          <motion.div
-            className="text-center max-w-5xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* Badge */}
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/15 text-primary border border-primary/30 mb-8 text-sm font-semibold uppercase tracking-wider"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', stiffness: 300 }}
-            >
-              <Heart className="w-4 h-4 animate-pulse-slow" aria-hidden="true" />
-              <span>HIGH-STAKES LIFESTEAL</span>
-              <HeartCrack className="w-4 h-4" aria-hidden="true" />
-            </motion.div>
-
-            {/* Title */}
-            <h1
-              id="hero-title"
-              className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl xl:text-8xl tracking-tight text-white mb-6 leading-[1.1]"
-            >
-              <span className="block">NyawaNusa</span>
-              <span className="block text-primary shimmer-text">LifeSteal</span>
-            </h1>
-
-            {/* Subtitle */}
-            <motion.p
-              className="text-lg sm:text-xl lg:text-2xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-            >
-              Nyawa di taruh, harta di taruh, hanya yang berani yang menang.
-              <br />
-              <span className="font-semibold text-primary">Start: 10♥ | Max: 40♥ | Kill: +2♥ | Drop Heart: ON | Ban on Elimination: ON</span>
-            </motion.p>
-
-            {/* Stats Bar */}
-            <motion.div
-              className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mb-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-            >
-              <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-dark-900/80 backdrop-blur-md border border-dark-800">
-                <div className="p-2 rounded-xl bg-primary/15 text-primary">
-                  <Heart className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <div className="text-left">
-                  <p className="font-display font-bold text-2xl text-white">10</p>
-                  <p className="text-xs text-slate-500">Start Hearts</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-dark-900/80 backdrop-blur-md border border-dark-800">
-                <div className="p-2 rounded-xl bg-special/15 text-special">
-                  <HeartCrack className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <div className="text-left">
-                  <p className="font-display font-bold text-2xl text-white">40</p>
-                  <p className="text-xs text-slate-500">Max Hearts</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-dark-900/80 backdrop-blur-md border border-dark-800">
-                <div className="p-2 rounded-xl bg-secondary/15 text-secondary">
-                  <Target className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <div className="text-left">
-                  <p className="font-display font-bold text-2xl text-white">+2</p>
-                  <p className="text-xs text-slate-500">Hearts Per Kill</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-dark-900/80 backdrop-blur-md border border-red-500/30">
-                <div className="p-2 rounded-xl bg-red-500/15 text-red-400">
-                  <Skull className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <div className="text-left">
-                  <p className="font-display font-bold text-2xl text-red-400">PERMA</p>
-                  <p className="text-xs text-slate-500">Ban on Death</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* CTA Buttons */}
-            <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-            >
-              <Link to="/store" className="btn-primary text-lg px-8 py-4 group w-full sm:w-auto">
-                <Heart className="w-5 h-5" aria-hidden="true" />
-                <span>Beli Rank & Mulai Main</span>
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-              </Link>
-              <a
-                href={SITE.discordInvite}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary text-lg px-8 py-4 w-full sm:w-auto"
-              >
-                <ExternalLink className="w-5 h-5" aria-hidden="true" />
-                Join Discord
+          <nav className="nav__links" aria-label="Navigasi utama">
+            <div className="nav__item">
+              <a className="nav__link" href="#mekanik">
+                <span>Arena</span>
+                <svg className="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                  <path d="M3 4.5 6 7.5 9 4.5" />
+                </svg>
               </a>
-              <Link to="/rules" className="btn-outline text-lg px-6 py-3 w-full sm:w-auto hidden sm:inline-flex">
-                <Shield className="w-5 h-5" aria-hidden="true" />
-                Baca Rules
-              </Link>
-            </motion.div>
+              <button
+                type="button"
+                className="nav__expand"
+                aria-expanded="false"
+                aria-controls="menu-arena"
+                aria-label="Buka submenu Arena"
+              >
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                  <path d="M3 4.5 6 7.5 9 4.5" />
+                </svg>
+              </button>
+              <div className="nav__menu" id="menu-arena">
+                <div className="wrap grid">
+                  <div className="menu-col span-4">
+                    <div className="t-label">Aturan Inti</div>
+                    <a href="#mekanik">
+                      Mekanik LifeSteal
+                      <span>Rebut 2 hati setiap mengalahkan lawan hingga batas 40 hati</span>
+                    </a>
+                    <a href="#taruhan">
+                      Risiko Eliminasi 0 Hati
+                      <span>Ban otomatis saat seluruh jantung habis hingga musim berganti</span>
+                    </a>
+                    <a href="#world">
+                      Server Lintas Versi
+                      <span>Dukungan Paper 1.21.4 untuk Java 1.8–1.21.4 serta Bedrock 19132</span>
+                    </a>
+                  </div>
+                  <div className="menu-col span-4">
+                    <div className="t-label">Sistem &amp; Dukungan</div>
+                    <a href="#plugin">
+                      Plugin Arena Server
+                      <span>LifeStealZ, CombatLogX, BetterBounty, dan zAuctionHouse</span>
+                    </a>
+                    <a href="#plans">
+                      Rank Operasional
+                      <span>Pilihan SURVIVOR hingga LEGEND tanpa keunggulan bertarung</span>
+                    </a>
+                    <a href="#faq">
+                      Aturan &amp; FAQ
+                      <span>Kebijakan fair play dan jadwal peluncuran musim 2026</span>
+                    </a>
+                  </div>
+                  <div className="menu-card span-4">
+                    <div className="frame panel">
+                      <img
+                        src="/assets/img/photo-f35965461-500.jpg"
+                        alt="Aliran lava merah menyala di malam hari."
+                        width={500}
+                        height={333}
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            {/* Server Status */}
-            <motion.div
-              className="mt-16 max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.6 }}
-            >
-              <ServerStatus />
-            </motion.div>
-          </motion.div>
+            <div className="nav__item">
+              <a className="nav__link" href="#plugin">Plugin</a>
+            </div>
+            <div className="nav__item">
+              <a className="nav__link" href="#plans">Rank</a>
+            </div>
+            <div className="nav__item">
+              <a className="nav__link" href="#faq">Aturan</a>
+            </div>
+          </nav>
+
+          <div className="nav__actions">
+            <a className="btn btn--primary" href="#world">
+              Masuk Server
+            </a>
+          </div>
+
+          <button type="button" className="nav__toggle" aria-label="Menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M4 8h16M4 16h16" />
+            </svg>
+          </button>
         </div>
+      </header>
 
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          aria-hidden="true"
+      <main id="top">
+        <section className="hero hero--photo" data-enter data-calm="left" aria-labelledby="hero-h">
+          <picture className="hero__bg">
+            <source
+              type="image/jpeg"
+              srcSet="/assets/img/photo-f114329277-960.jpg 960w, /assets/img/photo-f114329277-1280.jpg 1280w, /assets/img/photo-f114329277.jpg 1920w"
+              sizes="100vw"
+            />
+            <img
+              src="/assets/img/photo-f114329277-1280.jpg"
+              alt="Kawah lava menyala merah di tengah gelapnya batu vulkanik."
+              width={1920}
+              height={1272}
+              fetchPriority="high"
+              decoding="async"
+              data-source="stand-in"
+              data-subject="stand-in"
+            />
+          </picture>
+
+          <div className="wrap">
+            <div className="hero-text">
+              <div className="hero__text" data-enter="on">
+                <h1 id="hero-h">Server survival LifeSteal.</h1>
+                <p>
+                  Paper 1.21.4 Java 21 dengan 10 hati awal, maksimal 40 hati, CombatLogX 10 detik, serta ban otomatis pada 0 hati.
+                </p>
+                <div className="btn-row">
+                  <CopyIpButton label="Salin IP Server" className="btn btn--primary" />
+                  <a className="btn btn--secondary" href="#mekanik">
+                    Lihat Mekanik Server
+                  </a>
+                </div>
+                <p className="hero__copy-note">
+                  IP Java: {SITE.ip} · Bedrock Port {SITE.bedrockPort}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section mekanik-sec" id="mekanik" style={{ '--hm': 2 } as CSSProperties}>
+          <div className="wrap">
+            <div className="section-head">
+              <h2 id="mekanik-h">Mekanik duel LifeSteal.</h2>
+              <p>
+                Setiap pertemuan di luar area spawn langsung mempertaruhkan barang bawaan dan jumlah nyawa pemain.
+              </p>
+            </div>
+
+            <div className="grid">
+              <article className="card card--open span-4">
+                <div className="verb-thumb">
+                  <img
+                    src="/assets/img/photo-f35965461-960.jpg"
+                    srcSet="/assets/img/photo-f35965461-500.jpg 500w, /assets/img/photo-f35965461-960.jpg 960w, /assets/img/photo-f35965461.jpg 1280w"
+                    sizes="(max-width: 1023px) 100vw, 33vw"
+                    alt="Aliran lava malam menuruni lereng gelap gunung berapi."
+                    width={1280}
+                    height={853}
+                    loading="lazy"
+                    data-source="stand-in"
+                    data-subject="stand-in"
+                  />
+                </div>
+                <h3>Curi 2 hati lawan</h3>
+                <p>
+                  Pemain mulai dari 10 hati hingga batas 40 hati. Ketika lawan tumbang, item hati jatuh ke tanah untuk diambil.
+                </p>
+              </article>
+
+              <article className="card card--open span-4">
+                <div className="verb-thumb">
+                  <img
+                    src="/assets/img/photo-f142453548-960.jpg"
+                    srcSet="/assets/img/photo-f142453548-500.jpg 500w, /assets/img/photo-f142453548-960.jpg 960w, /assets/img/photo-f142453548.jpg 1280w"
+                    sizes="(max-width: 1023px) 100vw, 33vw"
+                    alt="Retakan lava menyala membelah daratan vulkanik di malam hari."
+                    width={1280}
+                    height={719}
+                    loading="lazy"
+                    data-source="stand-in"
+                    data-subject="stand-in"
+                  />
+                </div>
+                <h3>Kunci tempur 10 detik</h3>
+                <p>
+                  CombatLogX mengunci pemain selama 10 detik seusai serangan terakhir. Putus koneksi di tengah duel dihitung mati di tempat.
+                </p>
+              </article>
+
+              <article className="card card--open span-4">
+                <div className="verb-thumb">
+                  <img
+                    src="/assets/img/photo-f1295588-960.jpg"
+                    srcSet="/assets/img/photo-f1295588-500.jpg 500w, /assets/img/photo-f1295588-960.jpg 960w, /assets/img/photo-f1295588.jpg 1280w"
+                    sizes="(max-width: 1023px) 100vw, 33vw"
+                    alt="Pijar bara merah mengalir menuruni puncak gunung malam."
+                    width={1280}
+                    height={853}
+                    loading="lazy"
+                    data-source="stand-in"
+                    data-subject="stand-in"
+                  />
+                </div>
+                <h3>Bounty &amp; pasar 7 hari</h3>
+                <p>
+                  Pasang buronan lewat BetterBounty minimal Rp 1.000 atau perdagangkan item hati di zAuctionHouse hingga tujuh hari.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section
+          className="section"
+          id="taruhan"
+          data-moment="word-highlight"
+          data-moment-opts='{"from":0.95,"to":0.6}'
+          style={{ '--h': 1, '--hm': 1 } as CSSProperties}
         >
-          <span className="text-xs uppercase tracking-wider">Scroll</span>
-          <motion.div
-            className="w-6 h-10 border-2 border-slate-600 rounded-full flex justify-center pt-2"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Core Features */}
-      <section className="section relative" aria-labelledby="features-title">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_center,_rgba(220,38,38,0.08),transparent_60%)]" aria-hidden="true" />
-        <div className="container-main relative">
-          <SectionHeading
-            eyebrow="MEKANIK INTI"
-            title="Mengapa NyawaNusa Berbeda?"
-            desc="LifeSteal paling ekstrem yang pernah ada. Setiap mekanik dirancang untuk menciptakan ketegangan maksimal dan reward yang layak."
-            centered
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {LIFESTEAL_FEATURES.map((feature, i) => (
-              <FeatureCard key={feature.id} feature={feature} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Gameplay Systems */}
-      <section className="section relative bg-dark-900/50" aria-labelledby="systems-title">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(249,115,22,0.06),transparent_60%)]" aria-hidden="true" />
-        <div className="container-main relative">
-          <SectionHeading
-            eyebrow="SISTEM GAMEPLAY"
-            title="Stack Teknologi & Plugin"
-            desc="8 plugin inti yang bekerja harmonis menciptakan pengalaman high-stakes yang seamless, fair, dan adiktif."
-            centered
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {GAMEPLAY_SYSTEMS.map((system, i) => (
-              <GameplaySystemCard key={system.id} system={system} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Rank Overview */}
-      <section className="section relative" aria-labelledby="ranks-title">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(251,191,36,0.08),transparent_60%)]" aria-hidden="true" />
-        <div className="container-main relative">
-          <SectionHeading
-            eyebrow="RANK & PROGRESI"
-            title="Pilih Jalurmu"
-            desc="Dari Survivor hingga LEGEND. Setiap rank naik = lebih banyak jantung, claim block, kit, dan kekebalan. Rank LEGEND = kebebasan total."
-            centered
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {RANKS.map((rank, i) => (
-              <RankCard key={rank.id} rank={rank} index={i} />
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link to="/store" className="btn-primary text-lg px-8 py-4 inline-flex items-center gap-3">
-              <Award className="w-5 h-5" aria-hidden="true" />
-              Lihat Semua Rank & Beli
-              <ArrowRight className="w-5 h-5" aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured News */}
-      <section className="section relative bg-dark-900/50" aria-labelledby="news-title">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(220,38,38,0.06),transparent_60%)]" aria-hidden="true" />
-        <div className="container-main relative">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-            <SectionHeading
-              eyebrow="BERITA TERBARU"
-              title="Pengumuman & Update"
-              centered={false}
-            />
-            <Link to="/news" className="btn-outline self-end sm:self-auto">
-              <ExternalLink className="w-4 h-4" aria-hidden="true" />
-              Semua Berita
-            </Link>
-          </div>
-
-          {/* Featured */}
-          <NewsCard news={featuredNews} featured />
-
-          {/* Recent */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-8">
-            {recentNews.map((news, i) => (
-              <NewsCard key={news.id} news={news} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="section relative" aria-labelledby="cta-title">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-special/10" aria-hidden="true" />
-        <div className="container-main relative">
-          <motion.div
-            className="max-w-4xl mx-auto text-center p-8 md:p-12 rounded-3xl bg-dark-900/80 backdrop-blur-md border border-primary/20"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/15 text-primary border border-primary/30 mb-6 text-sm font-semibold uppercase tracking-wider">
-              <Zap className="w-4 h-4" aria-hidden="true" />
-              SIAP TARUH NYAWA?
+          <div className="wrap taruhan-wrap">
+            <div>
+              <h2 className="mo-wh__text" id="taruhan-h">
+                0 hati berarti tamat.
+              </h2>
+              <p className="mo-wh__sub">
+                Begitu nyawa menyentuh nol, ban eliminasi langsung menutup akses dunia utama hingga musim baru dimulai atau pemain mendapatkan item kebangkitan.
+              </p>
             </div>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-white mb-6">
-              Server tidak menunggu. <span className="text-primary">Hanya yang berani yang menang.</span>
-            </h2>
-            <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
-              Join ribuan pemain yang sudah menguji nyawanya. Start dengan 10 jantung, bangun kekuatanmu hingga 40, dan jadilah LEGEND di NyawaNusa.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/store" className="btn-primary text-lg px-8 py-4 group">
-                <Heart className="w-5 h-5" aria-hidden="true" />
-                Beli Rank Sekarang
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-              </Link>
-              <a
-                href={SITE.discordInvite}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary text-lg px-8 py-4"
-              >
-                <Users className="w-5 h-5" aria-hidden="true" />
-                Join Komunitas Discord
+
+            <dl className="taruhan-rules">
+              <div>
+                <dt>Nyawa Awal</dt>
+                <dd>10 hati penuh</dd>
+              </div>
+              <div>
+                <dt>Batas Atas</dt>
+                <dd>40 hati maksimal</dd>
+              </div>
+              <div>
+                <dt>Hadiah Duel</dt>
+                <dd>Rebut 2 hati</dd>
+              </div>
+              <div>
+                <dt>Eliminasi</dt>
+                <dd>Ban pada 0 hati</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        <section className="section" id="world" style={{ '--h': 1, '--hm': 1 } as CSSProperties}>
+          <div className="wrap">
+            <div className="section-head">
+              <h2 id="world-h">Server Paper lintas versi.</h2>
+              <p>
+                Satu dunia NyawaNusa di alamat {SITE.ip} menerima pemain Java 1.8 hingga 1.21.4 serta Bedrock port {SITE.bedrockPort}.
+              </p>
+            </div>
+
+            <div className="frame frame--photo world-frame">
+              <picture>
+                <source
+                  type="image/jpeg"
+                  srcSet="/assets/img/photo-f141881863-960.jpg 960w, /assets/img/photo-f141881863.jpg 1280w"
+                  sizes="(max-width: 1023px) 100vw, 1280px"
+                />
+                <img
+                  className="frame__img"
+                  src="/assets/img/photo-f141881863.jpg"
+                  alt="Sungai magma pijar membentang di dataran gelap pada malam hari."
+                  width={1280}
+                  height={749}
+                  loading="lazy"
+                  data-source="stand-in"
+                  data-subject="stand-in"
+                />
+              </picture>
+            </div>
+          </div>
+        </section>
+
+        <section className="section ground-surface" id="plugin" style={{ '--h': 1, '--hm': 1 } as CSSProperties}>
+          <div className="wrap grid plugin-grid">
+            <div className="span-5">
+              <div className="section-head">
+                <h2 id="plugin-h">Plugin server LifeSteal.</h2>
+                <p>
+                  Enam modul berjalan di Paper 1.21.4 tanpa mewajibkan modpack tambahan pada client pemain.
+                </p>
+              </div>
+
+              <ol className="rows">
+                <li>
+                  <div className="rows__head">
+                    <strong>LifeStealZ</strong>
+                    <span>10 ke 40 hati</span>
+                  </div>
+                  <p>Mengatur pencurian 2 hati, drop hati fisik, dan ban eliminasi saat nyawa mencapai nol.</p>
+                </li>
+                <li>
+                  <div className="rows__head">
+                    <strong>CombatLogX</strong>
+                    <span>Timer 10 detik</span>
+                  </div>
+                  <p>Menahan pemain selama 10 detik setelah serangan terakhir agar duel selalu tuntas.</p>
+                </li>
+                <li>
+                  <div className="rows__head">
+                    <strong>BetterBounty &amp; zAuctionHouse</strong>
+                    <span>Min. Rp 1.000</span>
+                  </div>
+                  <p>Taruhan buronan lawan dan lelang item maupun hati selama hingga tujuh hari.</p>
+                </li>
+                <li>
+                  <div className="rows__head">
+                    <strong>ViaVersion &amp; EssentialsX</strong>
+                    <span>Java + Bedrock</span>
+                  </div>
+                  <p>Ekonomi Vault lintas client Java 1.8–1.21.4 serta Bedrock port 19132.</p>
+                </li>
+              </ol>
+            </div>
+
+            <div className="span-7 start-6">
+              <div className="frame dg-panel" data-ui-loop="1">
+                <div className="dg" data-ui-loop="1" data-diagram={PLUGIN_DIAGRAM} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="plans" style={{ '--h': 1, '--hm': 2 } as CSSProperties}>
+          <div className="wrap">
+            <div className="section-head section-head--split">
+              <div>
+                <h2 id="plans-h">Rank dukungan server.</h2>
+                <p>
+                  Bantuan operasional NyawaNusa tanpa bonus nyawa awal maupun keunggulan bertarung.
+                </p>
+              </div>
+              <a className="link" href={DISCORD_URL} target="_blank" rel="noopener noreferrer">
+                Discord Server
               </a>
             </div>
-          </motion.div>
+
+            <div className="grid">
+              {RANKS.map((rank) => (
+                <article className="card span-3 rank-tier" key={rank.id}>
+                  <div className="rank-tier__icon" aria-hidden="true">
+                    <RankIcon name={rank.icon} />
+                  </div>
+                  <h3>Rank {rank.label}</h3>
+                  <div className="rank-tier__price">{rank.price}</div>
+                  <p>{rank.summary}</p>
+                  <p className="rank-tier__note">{rank.note}</p>
+                  <a
+                    className="link rank-tier__cta"
+                    href={DISCORD_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Dukung di Discord
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section g2m" id="faq" style={{ '--h': 1 } as CSSProperties}>
+          <div className="wrap grid">
+            <div className="span-5">
+              <div className="section-head">
+                <h2 id="faq-h">Aturan server &amp; FAQ.</h2>
+                <p>Ketentuan permainan adil dan jadwal peluncuran musim perdana NyawaNusa.</p>
+              </div>
+
+              <ol className="rows faq-rules">
+                <li className="faq-rules__row">
+                  <div className="faq-rules__body">
+                    <div className="rows__head">
+                      <strong>Fair play bersih</strong>
+                      <span>Tanpa cheat</span>
+                    </div>
+                    <p>Dilarang memakai hack client, auto-clicker, atau eksploitasi duplikasi.</p>
+                  </div>
+                  <span className="faq-rules__icon" aria-hidden="true">
+                    <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+                    </svg>
+                  </span>
+                </li>
+                <li className="faq-rules__row">
+                  <div className="faq-rules__body">
+                    <div className="rows__head">
+                      <strong>Anti kill farming</strong>
+                      <span>Dilarang keras</span>
+                    </div>
+                    <p>Bersekongkol membunuh akun cadangan berujung penghapusan nyawa.</p>
+                  </div>
+                  <span className="faq-rules__icon" aria-hidden="true">
+                    <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m11 19-6-6m0 8-2-2m5-3-4 4m5.5-2.5L21 6V3h-3L6.5 14.5" />
+                    </svg>
+                  </span>
+                </li>
+                <li className="faq-rules__row">
+                  <div className="faq-rules__body">
+                    <div className="rows__head">
+                      <strong>Jadwal musim 2026</strong>
+                      <span>1–15 Nov</span>
+                    </div>
+                    <p>Pretest 1–7 Nov, Beta 8–14 Nov, dan Grand Launch 15 Nov 2026.</p>
+                  </div>
+                  <span className="faq-rules__icon" aria-hidden="true">
+                    <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" />
+                    </svg>
+                  </span>
+                </li>
+                <li className="faq-rules__row">
+                  <div className="faq-rules__body">
+                    <div className="rows__head">
+                      <strong>Bantuan &amp; pelaporan</strong>
+                      <span>{SUPPORT_EMAIL}</span>
+                    </div>
+                    <p>Sampaikan laporan pelanggaran melalui Discord atau email resmi server.</p>
+                  </div>
+                  <span className="faq-rules__icon" aria-hidden="true">
+                    <svg className="ic ic-svg ic-24" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M22 12h-4M6 12H2m10-6V2m0 20v-4" />
+                    </svg>
+                  </span>
+                </li>
+              </ol>
+            </div>
+
+            <div className="span-7 start-6 faq">
+              {FAQS.map((item) => (
+                <div className="faq__item" key={item.q}>
+                  <h3>{item.q}</h3>
+                  <p>{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="footer closing footer--statement" id="gabung">
+        <div className="wrap">
+          <div className="closing__cta close--type">
+            <div className="section-head">
+              <h2 id="gabung-h">Masuk server LifeSteal.</h2>
+              <p className="close__sub">
+                Gunakan alamat {SITE.ip} untuk masuk lewat Minecraft Java 1.8–1.21.4 maupun Bedrock port {SITE.bedrockPort}.
+              </p>
+            </div>
+            <CopyIpButton label="Salin IP Server" className="btn btn--primary" />
+            <p className="close-facts">
+              Paper 1.21.4 · {SITE.ip} · Bedrock {SITE.bedrockPort}
+            </p>
+          </div>
+
+          <div className="closing__links">
+            <div className="grid">
+              <div className="span-4">
+                <a className="footer__mark" href="#top">
+                  <span className="mark" data-mark="dots" aria-hidden="true" />
+                  <span>NyawaNusa</span>
+                </a>
+                <p className="footer__lede">
+                  Server Survival LifeSteal di Paper 1.21.4.
+                </p>
+              </div>
+
+              <div className="footer__col span-2">
+                <h3>Arena</h3>
+                <ul>
+                  <li><a href="#mekanik">Mekanik LifeSteal</a></li>
+                  <li><a href="#taruhan">Eliminasi 0 Hati</a></li>
+                  <li><a href="#world">Lintas Versi</a></li>
+                </ul>
+              </div>
+
+              <div className="footer__col span-2">
+                <h3>Server</h3>
+                <ul>
+                  <li><a href="#plugin">Sistem Plugin</a></li>
+                  <li><a href="#plans">Rank Dukungan</a></li>
+                  <li><a href="#faq">Aturan &amp; FAQ</a></li>
+                </ul>
+              </div>
+
+              <div className="footer__col span-2">
+                <h3>Komunitas</h3>
+                <ul>
+                  <li><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer">Discord Resmi</a></li>
+                  <li><a href={`mailto:${SUPPORT_EMAIL}`}>Email Dukungan</a></li>
+                  <li><a href="#world">IP &amp; Port</a></li>
+                </ul>
+              </div>
+
+              <div className="footer__col span-2">
+                <h3>Informasi</h3>
+                <ul>
+                  <li><a href="#world">Server &amp; IP</a></li>
+                  <li><a href="/privacy.html">Privasi</a></li>
+                  <li><a href="/terms.html">Ketentuan</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="footer__legal">
+              <span>{SITE.footerCopyright}</span>
+              <a className="credits" href="/credits.html">Photographs via Wikimedia Commons</a>
+              <span>Paper 1.21.4 · Java 21 · Jakarta</span>
+            </div>
+          </div>
         </div>
-      </section>
+      </footer>
     </>
   );
 }
+
+export default Home;

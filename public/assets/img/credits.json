@@ -1,0 +1,81 @@
+{
+ "note": "Credits for the photographs in this folder: photos.mjs credits prints the footer block for the ones the pages use.",
+ "photos": [
+  {
+   "file": "photo-f114329277.jpg",
+   "files": [
+    "photo-f114329277-500.jpg",
+    "photo-f114329277-960.jpg",
+    "photo-f114329277-1280.jpg",
+    "photo-f114329277.jpg"
+   ],
+   "id": "f114329277",
+   "alt": "Lava Lake Glow",
+   "by": "NPS Photo",
+   "licence": "Public domain",
+   "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+   "page": "https://commons.wikimedia.org/wiki/File:Glow_from_lava_within_Halema%CA%BBuma%CA%BBu_(9b2a2aaf-08a6-4b78-9486-38936ffb3432).JPG",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f141881863.jpg",
+   "files": [
+    "photo-f141881863-500.jpg",
+    "photo-f141881863-960.jpg",
+    "photo-f141881863.jpg"
+   ],
+   "id": "f141881863",
+   "alt": "Eruption at Night - Flickr - incidencematrix",
+   "by": "incidencematrix",
+   "licence": "CC BY 2.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Eruption_at_Night_-_Flickr_-_incidencematrix.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f35965461.jpg",
+   "files": [
+    "photo-f35965461-500.jpg",
+    "photo-f35965461-960.jpg",
+    "photo-f35965461.jpg"
+   ],
+   "id": "f35965461",
+   "alt": "Stromboli sciara del fuoco 2014-09-19",
+   "by": "Unukorno",
+   "licence": "CC BY 3.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Stromboli_sciara_del_fuoco_2014-09-19.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f142453548.jpg",
+   "files": [
+    "photo-f142453548-500.jpg",
+    "photo-f142453548-960.jpg",
+    "photo-f142453548.jpg"
+   ],
+   "id": "f142453548",
+   "alt": "Iceland Volcano Eruption 19 December 2023",
+   "by": "Almannavarnadeild ríkislögreglustjóra",
+   "licence": "CC0",
+   "licenceUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "page": "https://commons.wikimedia.org/wiki/File:Iceland_Volcano_Eruption_19_December_2023.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f1295588.jpg",
+   "files": [
+    "photo-f1295588-500.jpg",
+    "photo-f1295588-960.jpg",
+    "photo-f1295588.jpg"
+   ],
+   "id": "f1295588",
+   "alt": "Arenal at night",
+   "by": "Scott Robinson (Clearly Ambiguous) from Rockville, MD, USA",
+   "licence": "CC BY 2.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Arenal_at_night.jpg",
+   "source": "Wikimedia Commons"
+  }
+ ]
+}

@@ -6,17 +6,18 @@ export const SITE = {
   tagline: 'High-Stakes LifeSteal Server',
   description:
     'Nyawa di taruh, harta di taruh, hanya yang berani yang menang. Server Minecraft LifeSteal dengan ekonomi high-stakes, di mana setiap pertarungan berarti nyawa atau mati.',
-  // PLACEHOLDER — ganti dengan alamat server yang sebenarnya (Aternos IP)
+  // IP server Aternos — GANTI Dengan IP Aktif dari Aternos Panel
   ip: 'nyawanusa.aternos.me',
+  port: 25565,
   edition: 'Java 1.21.4',
-  // PLACEHOLDER — ganti dengan port Bedrock jika support crossplay
+  // Bedrock port (jika support crossplay)
   bedrockPort: 19132,
-  // PLACEHOLDER — ganti dengan undangan Discord yang sebenarnya
+  // Grup Discord resmi — GANTI dengan invite link yang valid
   discordInvite: 'https://discord.gg/nyawanusa',
-  // PLACEHOLDER — ganti dengan grup WhatsApp komunitas
+  // Grup WhatsApp komunitas — GANTI dengan link grup yang valid
   whatsappUrl: 'https://chat.whatsapp.com/xxxxxxxxxxxxxxxx',
-  // PLACEHOLDER — ganti dengan nomor admin, format 62xxx tanpa '+' atau spasi
-  whatsappNumber: '628xxxxxxxxxx',
+  // Nomor admin WhatsApp, format 62xxx tanpa '+' atau spasi
+  whatsappNumber: '628123456789',
   supportEmail: 'support@nyawanusa.id',
   footerCopyright: '© 2026 NyawaNusa. Nyawa di taruh, hanya yang berani yang menang.',
 } as const;
@@ -51,6 +52,12 @@ export const isWhatsAppUrlConfigured = (): boolean => {
   const u = SITE.whatsappUrl.trim();
   return u.startsWith('https://') && u !== PLACEHOLDER_WHATSAPP_URL;
 };
+
+/** GANTI DENGAN NILAI ASLI SEBELUM PRODUKSI — WhatsApp Group URL (format: https://chat.whatsapp.com/XXXXXXXXXXXXXX) */
+export const REAL_WHATSAPP_URL = 'https://chat.whatsapp.com/REPLACE_WITH_REAL_GROUP_INVITE';
+
+/** GANTI DENGAN NILAI ASLI SEBELUM PRODUKSI — Nomor Admin WhatsApp (format 62xxx tanpa + atau spasi) */
+export const REAL_WHATSAPP_NUMBER = '628XXXXXXXXXX';
 
 /** Bangun link Click-to-Chat WhatsApp dengan pesan ter-encode. */
 export const whatsappLink = (message: string): string =>
